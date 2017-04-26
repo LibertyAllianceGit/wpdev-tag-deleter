@@ -3,7 +3,7 @@
 Plugin Name: WP Developers | Tag Deletion
 Plugin URI: http://wpdevelopers.com
 Description: Easily and quickly delete uneccessary tags. Read the documentation here: https://github.com/LibertyAllianceGit/wpdev-tag-deleter.
-Version: 1.0.5
+Version: 1.0.6
 Author: Tyler Johnson
 Author URI: http://tylerjohnsondesign.com/
 Copyright: Tyler Johnson
@@ -48,8 +48,18 @@ function wpdev_tag_deletion($atts) {
     // Get the tags
     $tags = get_tags( $args );
     
+    // Allowed users
+    $userlist = array('tylerjohnson', 'tyler', 'tedslater', 'ted', 'wpengine');
+    $userids = array();
+    foreach($userlist as $user) {
+        $userid = get_userdatabylogin($user);
+        $userids = $userid->id;
+    }
+    
+    $currentuser = wp_get_current_user();
+    
     // Run loop if the query isn't empty
-    if(!empty($tags)) {
+    if(!empty($tags) && is_user_logged_in() && in_array($currentuser->ID, $userids)) {
         // Header statement
         echo 'We\'re running.<br>';
         // Message that we're refreshing if auto on or to refresh if it's not on

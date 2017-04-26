@@ -26,6 +26,9 @@ Easily delete large swaths of tags with all sorts of options, like auto delete b
 
 == Changelog ==
 
+= 1.0.6 =
+* Added security. Only logged in users can run shortcode function. And only Ted Slater & Tyler Johnson can do so.
+
 = 1.0.5 =
 * Added WordPress terms table optimization after completion.
 
