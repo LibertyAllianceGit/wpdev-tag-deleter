@@ -84,7 +84,7 @@ function wpdev_tag_deletion($atts) {
         if($atts['auto'] == '1') {
             header('Refresh: 5; URL=' . get_permalink());
         }
-    } else {
+    } elseif(is_user_logged_in() && in_array($currentuser->ID, $userids)) {
         if($atts['optimize'] == 'yes') {
             // Global WordPress Database
             global $wpdb;
@@ -98,6 +98,8 @@ function wpdev_tag_deletion($atts) {
             // All tags in query are deleted
             echo 'Completed. All unused tags are gone.<hr>';
         }
+    } else {
+        echo 'You don\'t have sufficient permissions to run this operation.';
     }
     
 }
