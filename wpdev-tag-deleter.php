@@ -3,7 +3,7 @@
 Plugin Name: WP Developers | Tag Deletion
 Plugin URI: http://wpdevelopers.com
 Description: Easily and quickly delete uneccessary tags. Read the documentation here: https://github.com/LibertyAllianceGit/wpdev-tag-deleter.
-Version: 1.0.6
+Version: 1.0.7
 Author: Tyler Johnson
 Author URI: http://tylerjohnsondesign.com/
 Copyright: Tyler Johnson
@@ -48,59 +48,50 @@ function wpdev_tag_deletion($atts) {
     // Get the tags
     $tags = get_tags( $args );
     
-    // Allowed users
-    $userlist = array('tylerjohnson', 'tyler', 'tedslater', 'ted', 'wpengine');
-    $userids = array();
-    foreach($userlist as $user) {
-        $userid = get_userdatabylogin($user);
-        $userids = $userid->id;
-    }
-    
-    $currentuser = wp_get_current_user();
-    
     // Run loop if the query isn't empty
-    if(!empty($tags) && is_user_logged_in() && in_array($currentuser->ID, $userids)) {
-        // Header statement
-        echo 'We\'re running.<br>';
-        // Message that we're refreshing if auto on or to refresh if it's not on
-        if($atts['auto'] == '1') {
-            echo 'Starting next batch in 5 seconds.<hr>';
-        } else {
-            echo 'Please refresh this page to start the next batch.<hr>';
-        }
-        // Looping through each tag in the query
-        foreach($tags as $tag) {
-            wp_delete_term($tag->term_id, 'post_tag');
-            // Use correct terms
-            if($tag->count == '1') {
-                $postout = ' post';
-            } else {
-                $postout = ' posts';
-            }
-            // Letting us know which posts were deleted.
-            echo '&mdash; Deleted ' . $tag->name . ', which had ' . $tag->count . $postout . '.<br>';
-        }
-        // If auto refresh is on, auto refresh
-        if($atts['auto'] == '1') {
-            header('Refresh: 5; URL=' . get_permalink());
-        }
-    } elseif(is_user_logged_in() && in_array($currentuser->ID, $userids)) {
-        if($atts['optimize'] == 'yes') {
-            // Global WordPress Database
-            global $wpdb;
-            $tables = array('wp_terms', 'wp_term_relationships', 'wp_term_taxonomy');
-            foreach($tables as $table) {
+    if(is_user_logged_in() && current_user_can('administrator')) {
+	    if(!empty($tags)) {
+		// Header statement
+		echo 'We\'re running.<br>';
+		// Message that we're refreshing if auto on or to refresh if it's not on
+		if($atts['auto'] == '1') {
+		    echo 'Starting next batch in 5 seconds.<hr>';
+		} else {
+		    echo 'Please refresh this page to start the next batch.<hr>';
+		}
+		// Looping through each tag in the query
+		foreach($tags as $tag) {
+		    wp_delete_term($tag->term_id, 'post_tag');
+		    // Use correct terms
+		    if($tag->count == '1') {
+			$postout = ' post';
+		    } else {
+			$postout = ' posts';
+		    }
+		    // Letting us know which posts were deleted.
+		    echo '&mdash; Deleted ' . $tag->name . ', which had ' . $tag->count . $postout . '.<br>';
+		}
+		// If auto refresh is on, auto refresh
+		if($atts['auto'] == '1') {
+		    header('Refresh: 5; URL=' . get_permalink());
+		}
+	    } else {
+            if($atts['optimize'] == 'yes') {
+                // Global WordPress Database
+                global $wpdb;
+                $tables = array('wp_terms', 'wp_term_relationships', 'wp_term_taxonomy');
+                foreach($tables as $table) {
                 // Optimize wp_terms tables
                 $wpdb->query( "OPTIMIZE TABLE $table" );
+                }
+                echo 'Completed. All unused tags are gone and the database has been optimized.<hr>';
+            } else {
+                // All tags in query are deleted
+                echo 'Completed. All unused tags are gone.<hr>';
             }
-            echo 'Completed. All unused tags are gone and the database has been optimized.<hr>';
-        } else {
-            // All tags in query are deleted
-            echo 'Completed. All unused tags are gone.<hr>';
-        }
+	    }
     } else {
-        echo 'You don\'t have sufficient permissions to run this operation.';
+	    echo 'You don\'t have sufficient permissions to run this operation.';
     }
-    
 }
 add_shortcode('wpdevtags', 'wpdev_tag_deletion');
