@@ -26,6 +26,9 @@ Easily delete large swaths of tags with all sorts of options, like auto delete b
 
 == Changelog ==
 
+= 1.0.8 =
+* PHP7 compatibility fix.
+
 = 1.0.7 =
 * Bug fix.
 

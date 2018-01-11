@@ -3,7 +3,7 @@
 Plugin Name: WP Developers | Tag Deletion
 Plugin URI: http://wpdevelopers.com
 Description: Easily and quickly delete uneccessary tags. Read the documentation here: https://github.com/LibertyAllianceGit/wpdev-tag-deleter.
-Version: 1.0.7
+Version: 1.0.8
 Author: Tyler Johnson
 Author URI: http://tylerjohnsondesign.com/
 Copyright: Tyler Johnson
